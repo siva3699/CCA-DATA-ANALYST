@@ -1,0 +1,34 @@
+HDFS :-
+
+When a dataset outgrows the storage capacity of a single physical  machine, it becomes necessary to partition it across a number of separate  machines. Filesystems that manage the storage across a network of machines  are called distributed filesystems.
+
+Hadoop comes with a distributed filesystem called HDFS, which stands  for Hadoop Distributed Filesystem.
+
+
+The Design of HDFS
+
+HDFS is a filesystem designed for storing very large files with streaming data    access patterns, running on clusters of commodity hardware.
+
+Let’s examine this statement in more detail:
+
+Very large files
+
+“Very large” in this context means files that are hundreds of megabytes, gigabytes, or terabytes in size. 
+There are Hadoop clusters running today that store petabytes of data
+
+Streaming data access
+
+HDFS is built around the idea that the most efficient data processing pattern is a write-once, read-many-times pattern. A dataset is typically generated or copied from source, and then various analyses are performed on that dataset over time. Each analysis will involve a large proportion, if not all, of the dataset, so the time to read the whole dataset is more important than the latency in reading the first record.
+
+Commodity hardware
+
+Hadoop doesn’t require expensive, highly reliable hardware. It’s designed to run on clusters of commodity hardware (commonly          available hardware that can be obtained from multiple vendors) for which the chance of node failure across the cluster is high, at least for large clusters. HDFS is designed to carry on working without a noticeable interruption to the user in the face of such failure.
+
+Disadvantages :-
+
+It is also worth examining the applications for which using HDFS does not work so well. Although this may change in the future, these are areas where HDFS is not a good fit today:
+
+Low-latency data access
+
+Applications that require low-latency access to data, in the tens of milliseconds range, will not work well with HDFS. Remember,          HDFS is optimized for delivering a high throughput of data, and this may be at the expense of latency. HBase (see Chapter 20) is currently a better choice for low-latency          access.Lots of small filesBecause the namenode holds filesystem metadata in memory, the limit to the number of files in a          filesystem is governed by the amount of memory on the namenode. As a rule of thumb, each file, directory, and block takes about 150 bytes. So, for          example, if you had one          million files, each taking one block, you would need at least 300 MB          of memory. Although storing millions of files is feasible, billions          is beyond the capability of current hardware.[28]Multiple writers, arbitrary file modificationsFiles in HDFS may be written to by a single writer. Writes are          always made at the end of the file, in append-only fashion. There is          no support for multiple writers or for modifications at arbitrary          offsets in the file. (These might be supported in the future, but          they are likely to be relatively inefficient.)
+
