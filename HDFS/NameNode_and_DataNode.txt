@@ -1,0 +1,32 @@
+Namenodes and Datanodes :-
+
+An HDFS cluster has two types of nodes operating in a master−worker pattern: 
+a namenode (the master) and a number of datanodes (workers). 
+
+NameNode :-
+
+The namenode manages the filesystem namespace.
+It maintains the filesystem tree and the metadata for all the files and directories in the tree.
+This information is stored persistently on the local disk in the form of two files: the namespace image and the edit log. 
+The namenode also knows the datanodes on which all the blocks for a given file are located; 
+however,it does not store block locations persistently, because this information is reconstructed from datanodes when the system starts.
+A client accesses the filesystem on behalf of the user by communicating with the namenode and datanodes. 
+The client presents a filesystem interface similar to a Portable Operating System Interface (POSIX), so the user code does not need to 
+know about the namenode and datanodes to function.
+
+Datanodes :-
+
+Datanodes are the workhorses of the filesystem. They store and retrieve blocks when they are told to (by clients or the namenode), and they
+report back to the namenode periodically with lists of blocks that they are storing.Without the namenode, the filesystem cannot be used. 
+In fact, if the machine running the namenode were obliterated, all the files on the filesystem would be lost since there would be no way of
+knowing how to reconstruct the files from the blocks on the datanodes. For this reason, it is important to make the namenode resilient to
+failure, and Hadoop provides two mechanisms for this.The first way is to back up the files that make up the persistent state of the 
+filesystem metadata. Hadoop can be configured so that the namenode writes its persistent state to multiple filesystems. These writes are 
+synchronous and atomic. The usual configuration choice is to write to local disk as well as a remote NFS mount.It is also possible to run 
+a secondary namenode, which despite its name does not act as a namenode. Its main role is to periodically merge the namespace image with 
+the edit log to prevent the edit log from becoming too large. The secondary namenode usually runs on a separate physical machine because 
+it requires plenty of CPU and as much memory as the namenode to perform the merge. It keeps a copy of the merged namespace image, which can
+be used in the event of the namenode failing. However, the state of the secondary namenode lags that of the primary, so in the event of 
+total failure of the primary, data loss is almost certain. The usual course of action in this case is to copy the namenode’s metadata files
+that are on NFS to the secondary and run it as the new primary. (Note that it is possible to run a hot standby namenode instead of a 
+secondary, as discussed in HDFS High Availability.)
