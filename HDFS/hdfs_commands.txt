@@ -2,3 +2,16 @@
 
 hadoop fs
 
+
+
+2.copying a file from the local filesystem to HDFS
+
+$ hadoop fs -copyFromLocal input/docs/quangle.txt  hdfs://localhost/user/tom/quangle.txt
+
+
+
+3. To get help for any command
+
+$ hadoop fs -help put
+
+$ hadoop fs -help copyFromLocal
