@@ -1,0 +1,4 @@
+1.To display list of commnads that hdfs has 
+
+hadoop fs
+
