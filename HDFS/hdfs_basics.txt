@@ -30,5 +30,44 @@ It is also worth examining the applications for which using HDFS does not work s
 
 Low-latency data access
 
-Applications that require low-latency access to data, in the tens of milliseconds range, will not work well with HDFS. Remember,          HDFS is optimized for delivering a high throughput of data, and this may be at the expense of latency. HBase (see Chapter 20) is currently a better choice for low-latency          access.Lots of small filesBecause the namenode holds filesystem metadata in memory, the limit to the number of files in a          filesystem is governed by the amount of memory on the namenode. As a rule of thumb, each file, directory, and block takes about 150 bytes. So, for          example, if you had one          million files, each taking one block, you would need at least 300 MB          of memory. Although storing millions of files is feasible, billions          is beyond the capability of current hardware.[28]Multiple writers, arbitrary file modificationsFiles in HDFS may be written to by a single writer. Writes are          always made at the end of the file, in append-only fashion. There is          no support for multiple writers or for modifications at arbitrary          offsets in the file. (These might be supported in the future, but          they are likely to be relatively inefficient.)
+Applications that require low-latency access to data, in the tens of milliseconds range, will not work well with HDFS. Remember,          HDFS is optimized for delivering a high throughput of data, and this may be at the expense of latency. HBase (see Chapter 20) is currently a better choice for low-latency access.
+
+Lots of small files
+
+Because the namenode holds   metadata in memory, the limit to the number of files in a filesystem is governed by the amount of memory on the namenode. As a rule of thumb, each file, directory, and block takes about 150 bytes. So, for example, if you had one million files, each taking one block, you would need at least 300 MB of memory. Although storing millions of files is feasible, billions is beyond the capability of current hardware.
+
+Multiple writers, arbitrary file modifications
+
+Files in HDFS may be written to by a single writer. Writes are always made at the end of the file, in append-only fashion. There is no support for multiple writers or for modifications at arbitrary offsets in the file. (These might be supported in the future, but          they are likely to be relatively inefficient.)
+
+
+
+HDFS Concepts
+
+
+Blocks
+
+A disk has a block size, which is the minimum amount of data that it can read or write. Filesystems for a single disk build on this by      dealing with data in blocks, which are an integral multiple of the disk block size. Filesystem blocks are typically a few kilobytes in size, whereas disk blocks are normally 512 bytes. This is generally transparent to the filesystem user who is simply reading or writing a file of whatever length. However, there are tools to perform filesystem maintenance, such as df and fsck, that operate on the filesystem block level.
+
+HDFS, too, has the concept of a block, but it is a much larger unit—128 MB by default. Like in a filesystem for a single disk, files in HDFS are broken into block-sized chunks, which are stored as independent units. Unlike a filesystem for a single disk, a file in HDFS that is smaller than a single block does not occupy a full block’s worth of underlying storage. (For example, a 1 MB file stored with a block size of 128 MB uses 1 MB of disk space, not 128 MB.) When unqualified, the term “block” in this book refers to a block in HDFS.
+
+
+
+
+Why Is a Block in HDFS So Large?
+
+HDFS blocks are large compared to disk blocks, and the reason is to minimize the cost of seeks. If the block is large enough, the time it takes to transfer the data from the disk can be significantly  longer than the time to seek to the start of the block. Thus,transferring a large file made of multiple blocks operates at the disk transfer rate.
+
+A quick calculation shows that if the seek time is around 10 ms and the transfer rate is 100 MB/s, to make the seek time 1% of the        transfer time, we need to make the block size around 100 MB. The default is actually 128 MB, although many HDFS installations use        larger block sizes. This figure will continue to be revised upward as transfer speeds grow with new generations of disk drives.This argument shouldn’t be taken too far, however. Map tasks in MapReduce normally operate on one block at a time, so if you have too few tasks (fewer than nodes in the cluster), your jobs will run slower than they could otherwise.
+
+
+
+To insure against corrupted blocks and disk and machine failure, each block is replicated to a small number of physically separate machines (typically three). If a block becomes unavailable, a copy can be read from another location in a way that is transparent to the client. A block that is no longer available due to corruption or machine failure can be replicated from its alternative locations to other live machines to bring the replication factor back to the normal level. Similarly, some applications may choose to set a high replication factor for the blocks in a popular file to spread the read load on the cluster.
+
+
+Like its disk filesystem cousin, HDFS’s fsck command understands blocks. For example,running:
+
+$ hdfs fsck / -files -blocks
+
+will list the blocks that make up each file in the filesystem.
 
