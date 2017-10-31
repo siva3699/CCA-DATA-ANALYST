@@ -15,3 +15,17 @@ $ hadoop fs -copyFromLocal input/docs/quangle.txt  hdfs://localhost/user/tom/qua
 $ hadoop fs -help put
 
 $ hadoop fs -help copyFromLocal
+
+
+
+4. To set blocksize and replication factor for any file for seesion level
+
+$ hadoop fs -Ddfs.blocksize=134217728  filename
+$ hadoop fs -Ddfs.replication=3   filename
+
+
+5.To set globally defualt value for any parameter for hdfs 
+
+go to dir /etc/hadoop/conf
+
+open file hdfs-site.xml and set the parameter
