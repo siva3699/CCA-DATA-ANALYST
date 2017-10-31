@@ -29,3 +29,8 @@ $ hadoop fs -Ddfs.replication=3   filename
 go to dir /etc/hadoop/conf
 
 open file hdfs-site.xml and set the parameter
+
+
+6. To check files block,locations and replication factor in hdfs
+
+$ hadoop fsck /user/siva3699/flights.json -files -blocks -locations
