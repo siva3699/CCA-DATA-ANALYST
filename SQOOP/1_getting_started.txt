@@ -11,6 +11,32 @@ To view the Jar file
 
 Go to the location :- /usr/hdp/2.5.0.0-1245/sqoop/lib   and you will see a Jar file named  "mysql-connector-java.jar" for MYSQL
 
+If you have to connect to any other database we have to put a copy of the jar file just like above under /usr/hdp/2.5.0.0-1245/sqoop/lib 
+location.
+
+Note :- This location may change based on the distribution of hadoop.
+You need to contact the admin to get the precise loaction.
+
+
+----To connect and validate MYSQL----
+
+$ mysql -u retail_dba -h nn01.itversity.com -p
+
+u -- username
+h -- hostname
+p -- password
+
+password is itversity
+
+MYSQL will be running on port 3306 by default
+
+to verify mysql running on particular host verify by 
+
+$ nc nn01.itversity.com 3306
+
+
+
+
 
 
 
