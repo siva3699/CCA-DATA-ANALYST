@@ -1,2 +1,15 @@
 --validate sqoop and RDBMS---
 
+1.just run command  sqoop to validate sqoop exists or not 
+
+2. sqoop help -- to get list of commands that are available
+
+3. sqoop help eval -- to get help for a specific command
+
+
+
+
+
+
+
+
