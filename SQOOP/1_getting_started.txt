@@ -34,8 +34,19 @@ to verify mysql running on particular host verify by
 
 $ nc nn01.itversity.com 3306
 
+--- to view list of databases
 
+sqoop list-databases \
+--connect "jdbc:mysql://nn01.itversity.com:3306" \
+--username retail_dba \
+--password itversity 
 
+To give password interactively
+
+sqoop list-databases \
+--connect "jdbc:mysql://nn01.itversity.com:3306" \
+--username retail_dba \
+--P
 
 
 
