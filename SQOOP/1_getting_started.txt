@@ -64,7 +64,13 @@ sqoop list-tables \
 --P
 
 
+----------------------To evalvaute anything before importing----------------------
 
+$ sqoop eval \
+--connect "jdbc:mysql://nn01.itversity.com:3306/retail_db" \
+--username retail_dba \
+--password itversity \
+--query "select * from order_items LIMIT 10 "
 
 
 
