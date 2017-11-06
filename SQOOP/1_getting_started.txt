@@ -6,6 +6,12 @@
 
 3. sqoop help eval -- to get help for a specific command
 
+4.To connect to any RDBMS using sqoop we need a JDBC connection which is a jar file
+To view the Jar file
+
+Go to the location :- /usr/hdp/2.5.0.0-1245/sqoop/lib   and you will see a Jar file named  "mysql-connector-java.jar" for MYSQL
+
+
 
 
 
